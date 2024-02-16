@@ -1,20 +1,34 @@
 import streamlit as st
-import numpy as np
-import plotly.figure_factory as ff
+import plotly.graph_objects as go
+import plotly.express as px
 
-# Add histogram data
-x1 = np.random.randn(200) - 2
-x2 = np.random.randn(200)
-x3 = np.random.randn(200) + 2
 
-# Group data together
-hist_data = [x1, x2, x3]
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-group_labels = ['Group 1', 'Group 2', 'Group 3']
+fig = go.Figure()
+fig.add_trace(go.Bar(
+    x=months,
+    y=[20, 14, 25, 16, 18, 22, 19, 15, 12, 16, 14, 17],
+    name='Primary Product',
+    marker_color='indianred'
+))
+fig.add_trace(go.Bar(
+    x=months,
+    y=[19, 14, 22, 14, 16, 19, 15, 14, 10, 12, 12, 16],
+    name='Secondary Product',
+    marker_color='lightsalmon'
+))
 
-# Create distplot with custom bin_size
-fig = ff.create_distplot(
-        hist_data, group_labels, bin_size=[.1, .25, .5])
+# Here we modify the tickangle of the xaxis, resulting in rotated labels.
+fig.update_layout(barmode='group', xaxis_tickangle=-45)
 
 # Plot!
 st.plotly_chart(fig, use_container_width=True)
+
+
+df = px.data.gapminder().query("continent == 'Europe' and year == 2007 and pop > 2.e6")
+fig2 = px.bar(df, y='pop', x='country', text='pop')
+fig2.update_traces(texttemplate='%{text:.2s}', textposition='outside')
+fig2.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')
+st.plotly_chart(fig2, use_container_width=True)
